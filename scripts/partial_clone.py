@@ -66,16 +66,23 @@ def main():
                     check=True
                 )
             else:
-                print(f"分支 {target_branch} 不存在，克隆默认分支并创建新分支")
-                # 克隆默认分支
+                print(f"分支 {target_branch} 不存在，创建空的 Git 仓库")
+                # 在临时目录中初始化一个新的 Git 仓库
                 subprocess.run(
-                    ["gh", "repo", "clone", f"{github_repository}", temp_dir, "--", 
-                     "--depth", "1"],
+                    ["git", "init"],
+                    cwd=temp_dir,
                     check=True
                 )
                 # 创建新分支
                 subprocess.run(
                     ["git", "checkout", "-b", target_branch],
+                    cwd=temp_dir,
+                    check=True
+                )
+                # 设置远程仓库
+                remote_url = f"https://github.com/{github_repository}.git"
+                subprocess.run(
+                    ["git", "remote", "add", "origin", remote_url],
                     cwd=temp_dir,
                     check=True
                 )
