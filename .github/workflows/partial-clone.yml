@@ -1,7 +1,15 @@
 name: Partial Repository Clone
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # 保留手动触发选项
+  push:
+    paths:
+      - 'scripts/**'  # 当 scripts 目录下的文件发生变化时触发
+      - 'config.yml'  # 当 config.yml 文件发生变化时触发
+  pull_request:
+    paths:
+      - 'scripts/**'  # 当 PR 中 scripts 目录下的文件发生变化时触发
+      - 'config.yml'  # 当 PR 中 config.yml 文件发生变化时触发
 
 # 添加权限配置
 permissions:
