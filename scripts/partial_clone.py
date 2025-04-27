@@ -144,15 +144,10 @@ def main():
                     check=True
                 )
                 
-                # 使用 GitHub CLI 推送更改
+                # 使用标准 git push 命令推送更改
                 print(f"推送更改到 {target_branch} 分支")
                 subprocess.run(
-                    ["gh", "auth", "status"], 
-                    cwd=temp_dir, 
-                    check=True
-                )
-                subprocess.run(
-                    ["gh", "repo", "sync", "--source", ".", "--branch", target_branch, "--force"],
+                    ["git", "push", "origin", target_branch],
                     cwd=temp_dir,
                     check=True
                 )
