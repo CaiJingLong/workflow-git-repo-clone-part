@@ -1,0 +1,41 @@
+name: Partial Repository Clone
+
+on:
+  workflow_dispatch:
+
+# 添加权限配置
+permissions:
+  contents: write  # 允许修改仓库内容
+  pull-requests: write  # 如果需要创建 PR，可以添加此权限
+
+jobs:
+  partial-clone:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出当前仓库
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      
+      - name: 设置 Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml
+      
+      - name: 设置 GitHub CLI 认证
+        run: |
+          # GitHub Actions runner 已预装 GitHub CLI
+          # 使用 GITHUB_TOKEN 进行身份验证
+          echo "${{ github.token }}" | gh auth login --with-token
+      
+      - name: 执行部分克隆
+        run: |
+          # 确保脚本可执行
+          chmod +x ./scripts/partial_clone.py
+          # 执行脚本
+          python ./scripts/partial_clone.py
