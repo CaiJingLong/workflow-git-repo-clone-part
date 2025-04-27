@@ -27,13 +27,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install pyyaml
       
-      - name: 设置 GitHub CLI 认证
+      - name: 设置 GitHub CLI 和 Git 认证
         run: |
           # GitHub Actions runner 已预装 GitHub CLI
           # 使用 GITHUB_TOKEN 进行身份验证
           echo "${{ github.token }}" | gh auth login --with-token
+          # 配置 Git 使用 GitHub CLI 的认证
+          gh auth setup-git
       
       - name: 执行部分克隆
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           # 确保脚本可执行
           chmod +x ./scripts/partial_clone.py
