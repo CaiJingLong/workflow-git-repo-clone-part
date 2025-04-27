@@ -1,14 +1,5 @@
 repos:
-  - name: "react-components"
-    url: "https://github.com/facebook/react.git"
+  - name: "supabase-docker"
+    url: "https://github.com/supabase/supabase.git"
     path:
-      - "packages/react"
-      - "packages/react-dom"
-  
-  - name: "vue-reactivity"
-    url: "https://github.com/vuejs/core.git"
-    path: "packages/reactivity"
-  
-  - name: "tensorflow-tutorials"
-    url: "https://github.com/tensorflow/tensorflow.git"
-    path: "tensorflow/examples/tutorials"
+      - docker
