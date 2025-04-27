@@ -23,6 +23,14 @@ def main():
     github_repository = os.environ.get('GITHUB_REPOSITORY')
     if not github_repository:
         raise ValueError("无法获取 GITHUB_REPOSITORY 环境变量")
+    
+    # 获取 GitHub Token
+    github_token = os.environ.get('GITHUB_TOKEN')
+    if not github_token:
+        # 尝试从 github.token 环境变量获取
+        github_token = os.environ.get('INPUT_TOKEN')
+        if not github_token:
+            print("警告: 无法获取 GITHUB_TOKEN，将使用默认认证方式")
 
     # 处理每个仓库
     for repo in config["repos"]:
@@ -83,6 +91,15 @@ def main():
                 cwd=temp_dir, 
                 check=True
             )
+            
+            # 如果有 GitHub Token，配置远程仓库 URL 使用 token 认证
+            if github_token:
+                remote_url = f"https://x-access-token:{github_token}@github.com/{github_repository}.git"
+                subprocess.run(
+                    ["git", "remote", "set-url", "origin", remote_url],
+                    cwd=temp_dir,
+                    check=True
+                )
             
             # 为这个仓库创建临时目录
             repo_temp_dir = tempfile.mkdtemp()
@@ -146,8 +163,23 @@ def main():
                 
                 # 使用标准 git push 命令推送更改
                 print(f"推送更改到 {target_branch} 分支")
+                
+                # 打印 git remote -v 信息，用于调试
                 subprocess.run(
-                    ["git", "push", "origin", target_branch],
+                    ["git", "remote", "-v"],
+                    cwd=temp_dir,
+                    check=True
+                )
+                
+                # 推送更改
+                push_cmd = ["git", "push", "origin", target_branch]
+                
+                # 如果是新分支，添加 -u 参数
+                if not branch_exists:
+                    push_cmd.insert(2, "-u")
+                
+                subprocess.run(
+                    push_cmd,
                     cwd=temp_dir,
                     check=True
                 )
